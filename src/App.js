@@ -131,6 +131,24 @@ export default function App() {
               )
             ),
             React.createElement("button", { onClick: () => setModal("add"), style: btnPrimary }, "+ ADD MACHINE")
+            React.createElement("button", {
+              onClick: () => {
+                const next = theme === "dark" ? "light" : "dark";
+                setTheme(next);
+                localStorage.setItem("vibehack_theme", next);
+              },
+              style: {
+                background: "transparent",
+                border: `1px solid ${T.border}`,
+                color: T.textDim,
+                borderRadius: "5px",
+                padding: "9px 14px",
+                fontFamily: "monospace",
+                fontSize: "13px",
+                cursor: "pointer",
+              }
+            }, theme === "dark" ? "☀️ Light" : "🌙 Dark")
+                        
           ),
 
           // Progress bar

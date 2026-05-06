@@ -3,6 +3,7 @@ import MachineModal from "./components/MachineModal";
 import StatCard from "./components/StatCard";
 import MachineCard from "./components/MachineCard";
 import { PLATFORMS, DIFFICULTIES, STATUSES } from "./constants";
+import { PLATFORMS, DIFFICULTIES, STATUSES, THEMES } from "./constants";
 
 const [theme, setTheme] = React.useState(() =>
   localStorage.getItem("vibehack_theme") || "dark"
@@ -16,7 +17,7 @@ const defaultMachines = [
 
 const inputStyle = {
   width: "100%",
-  background: "#161b22",
+  background: "T.bg",
   border: "1px solid #30363d",
   borderRadius: "5px",
   color: "#e6edf3",

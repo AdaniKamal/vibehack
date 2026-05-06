@@ -57,3 +57,30 @@ export const btnSmall = {
   border: "1px solid rgba(0,255,157,0.3)", borderRadius: "4px",
   padding: "5px 10px", fontSize: "11px", cursor: "pointer", fontFamily: "monospace",
 };
+
+export const THEMES = {
+  dark: {
+    bg: "#0a0d12",
+    surface: "#161b22",
+    surface2: "rgba(255,255,255,0.02)",
+    border: "#21262d",
+    borderInput: "#30363d",
+    text: "#e6edf3",
+    textDim: "#888",
+    textFaint: "#555",
+    textFaintest: "#333",
+    modalBg: "#0d1117",
+  },
+  light: {
+    bg: "#f0f4f8",
+    surface: "#ffffff",
+    surface2: "rgba(0,0,0,0.02)",
+    border: "#d0d7de",
+    borderInput: "#b0bec5",
+    text: "#0d1117",
+    textDim: "#555",
+    textFaint: "#888",
+    textFaintest: "#bbb",
+    modalBg: "#ffffff",
+  },
+};

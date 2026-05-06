@@ -1,5 +1,8 @@
 # Vibehack
 
+vibehack.sh — recon → scan → enumeration → guided next steps with explanations
+
+
 ```
 vibehack-tracker/
 ├── public/

@@ -4,6 +4,11 @@ import StatCard from "./components/StatCard";
 import MachineCard from "./components/MachineCard";
 import { PLATFORMS, DIFFICULTIES, STATUSES } from "./constants";
 
+const [theme, setTheme] = React.useState(() =>
+  localStorage.getItem("vibehack_theme") || "dark"
+);
+const T = THEMES[theme]; // shorthand
+
 const defaultMachines = [
   { id: 1, name: "Lame", platform: "HackTheBox", difficulty: "Easy", os: "Linux", status: "Pwned", userFlag: true, rootFlag: true, notes: "First HTB box. SMB exploit via vsftpd.", date: "2025-01-10", tags: ["SMB", "Metasploit"] },
   { id: 2, name: "Blue", platform: "HackTheBox", difficulty: "Easy", os: "Windows", status: "In Progress", userFlag: false, rootFlag: false, notes: "EternalBlue MS17-010 – need to try manual.", date: "2025-01-12", tags: ["EternalBlue", "SMB"] },

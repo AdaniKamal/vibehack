@@ -2,6 +2,11 @@
 
 vibehack.sh — recon → scan → enumeration → guided next steps with explanations
 
+```
+chmod +x vibehack.sh
+./vibehack.sh 10.10.10.1 Lame
+```
+
 
 ```
 vibehack-tracker/

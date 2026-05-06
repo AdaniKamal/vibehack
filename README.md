@@ -1,4 +1,4 @@
-# vibehack
+# Vibehack
 
 ```
 vibehack-tracker/

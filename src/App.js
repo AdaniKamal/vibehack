@@ -2,37 +2,21 @@ import React, { useState, useEffect } from "react";
 import MachineModal from "./components/MachineModal";
 import StatCard from "./components/StatCard";
 import MachineCard from "./components/MachineCard";
-import { PLATFORMS, DIFFICULTIES, STATUSES } from "./constants";
 import { PLATFORMS, DIFFICULTIES, STATUSES, THEMES } from "./constants";
-
-const [theme, setTheme] = React.useState(() =>
-  localStorage.getItem("vibehack_theme") || "dark"
-);
-const T = THEMES[theme]; // shorthand
 
 const defaultMachines = [
   { id: 1, name: "Lame", platform: "HackTheBox", difficulty: "Easy", os: "Linux", status: "Pwned", userFlag: true, rootFlag: true, notes: "First HTB box. SMB exploit via vsftpd.", date: "2025-01-10", tags: ["SMB", "Metasploit"] },
   { id: 2, name: "Blue", platform: "HackTheBox", difficulty: "Easy", os: "Windows", status: "In Progress", userFlag: false, rootFlag: false, notes: "EternalBlue MS17-010 – need to try manual.", date: "2025-01-12", tags: ["EternalBlue", "SMB"] },
 ];
 
-const inputStyle = {
-  width: "100%",
-  background: "T.bg",
-  border: "1px solid #30363d",
-  borderRadius: "5px",
-  color: "#e6edf3",
-  padding: "8px 10px",
-  fontSize: "13px",
-  fontFamily: "monospace",
-  boxSizing: "border-box",
-  outline: "none",
-};
-
 export default function App() {
   const [machines, setMachines] = useState(() => {
     try { return JSON.parse(localStorage.getItem("vibehack_machines") || JSON.stringify(defaultMachines)); }
     catch { return defaultMachines; }
   });
+  const [theme, setTheme] = useState(() =>
+    localStorage.getItem("vibehack_theme") || "dark"
+  );
   const [modal, setModal] = useState(null);
   const [search, setSearch] = useState("");
   const [filterPlatform, setFilterPlatform] = useState("All");
@@ -40,9 +24,17 @@ export default function App() {
   const [filterDiff, setFilterDiff] = useState("All");
   const [sort, setSort] = useState("date");
 
+  const T = THEMES[theme];
+
   useEffect(() => {
     localStorage.setItem("vibehack_machines", JSON.stringify(machines));
   }, [machines]);
+
+  const toggleTheme = () => {
+    const next = theme === "dark" ? "light" : "dark";
+    setTheme(next);
+    localStorage.setItem("vibehack_theme", next);
+  };
 
   const saveMachine = (form) => {
     if (form.id) {
@@ -88,6 +80,19 @@ export default function App() {
     return s;
   })();
 
+  const inputStyle = {
+    width: "100%",
+    background: T.surface,
+    border: `1px solid ${T.borderInput}`,
+    borderRadius: "5px",
+    color: T.text,
+    padding: "8px 10px",
+    fontSize: "13px",
+    fontFamily: "monospace",
+    boxSizing: "border-box",
+    outline: "none",
+  };
+
   const btnPrimary = {
     background: "#00ff9d", color: "#000", border: "none", borderRadius: "5px",
     padding: "11px 22px", fontFamily: "monospace", fontWeight: "700",
@@ -95,17 +100,31 @@ export default function App() {
     boxShadow: "0 0 20px rgba(0,255,157,0.3)",
   };
 
+  const btnTheme = {
+    background: "transparent",
+    border: `1px solid ${T.border}`,
+    color: T.textDim,
+    borderRadius: "5px",
+    padding: "9px 14px",
+    fontFamily: "monospace",
+    fontSize: "13px",
+    cursor: "pointer",
+    transition: "all 0.2s",
+  };
+
   return (
     React.createElement("div", {
       style: {
         minHeight: "100vh",
-        background: "#0a0d12",
+        background: T.bg,
         fontFamily: "'Courier New', monospace",
-        color: "#e6edf3",
+        color: T.text,
+        transition: "background 0.3s, color 0.3s",
       }
     },
-      // Scanline overlay
-      React.createElement("div", {
+
+      // Scanline overlay — dark mode only
+      theme === "dark" && React.createElement("div", {
         style: {
           position: "fixed", inset: 0, pointerEvents: "none", zIndex: 0,
           backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,255,157,0.015) 2px, rgba(0,255,157,0.015) 4px)",
@@ -123,37 +142,26 @@ export default function App() {
           },
             React.createElement("div", null,
               React.createElement("div", { style: { color: "#00ff9d", fontSize: "11px", letterSpacing: "4px", marginBottom: "4px" } }, "// OSCP PREP TRACKER"),
-              React.createElement("h1", { style: { margin: 0, fontSize: "clamp(28px, 5vw, 42px)", fontWeight: "900", color: "#fff", letterSpacing: "-1px" } },
+              React.createElement("h1", { style: { margin: 0, fontSize: "clamp(28px, 5vw, 42px)", fontWeight: "900", color: T.text, letterSpacing: "-1px" } },
                 "Vibe",
                 React.createElement("span", { style: { color: "#00ff9d" } }, "Hack")
               ),
-              React.createElement("div", { style: { color: "#555", fontSize: "11px", marginTop: "4px", letterSpacing: "2px" } },
+              React.createElement("div", { style: { color: T.textFaint, fontSize: "11px", marginTop: "4px", letterSpacing: "2px" } },
                 `${machines.length} MACHINES · ${pwned} PWNED · EXAM READY: ${Math.round((pwned / Math.max(machines.length, 1)) * 100)}%`
               )
             ),
-            React.createElement("button", { onClick: () => setModal("add"), style: btnPrimary }, "+ ADD MACHINE")
-            React.createElement("button", {
-              onClick: () => {
-                const next = theme === "dark" ? "light" : "dark";
-                setTheme(next);
-                localStorage.setItem("vibehack_theme", next);
-              },
-              style: {
-                background: "transparent",
-                border: `1px solid ${T.border}`,
-                color: T.textDim,
-                borderRadius: "5px",
-                padding: "9px 14px",
-                fontFamily: "monospace",
-                fontSize: "13px",
-                cursor: "pointer",
-              }
-            }, theme === "dark" ? "☀️ Light" : "🌙 Dark")
-                        
+
+            // Header buttons
+            React.createElement("div", { style: { display: "flex", gap: "10px", alignItems: "center" } },
+              React.createElement("button", { onClick: toggleTheme, style: btnTheme },
+                theme === "dark" ? "☀️ Light" : "🌙 Dark"
+              ),
+              React.createElement("button", { onClick: () => setModal("add"), style: btnPrimary }, "+ ADD MACHINE")
+            )
           ),
 
           // Progress bar
-          React.createElement("div", { style: { marginTop: "20px", background: "#161b22", borderRadius: "4px", height: "4px", overflow: "hidden" } },
+          React.createElement("div", { style: { marginTop: "20px", background: T.surface, borderRadius: "4px", height: "4px", overflow: "hidden" } },
             React.createElement("div", {
               style: {
                 width: `${(pwned / Math.max(machines.length, 1)) * 100}%`,
@@ -166,18 +174,19 @@ export default function App() {
 
         // Stats
         React.createElement("div", { style: { display: "flex", gap: "12px", flexWrap: "wrap", marginBottom: "28px" } },
-          React.createElement(StatCard, { label: "Pwned", value: pwned, accent: "#00ff9d" }),
-          React.createElement(StatCard, { label: "In Progress", value: inProg, accent: "#d4a017" }),
-          React.createElement(StatCard, { label: "User Flags", value: userFlags, accent: "#00ccff" }),
-          React.createElement(StatCard, { label: "Root Flags", value: rootFlags, accent: "#ff6b35" }),
-          React.createElement(StatCard, { label: "Day Streak", value: `${streak}🔥`, accent: "#ff4f4f" }),
-          React.createElement(StatCard, { label: "Total", value: machines.length, accent: "#888" })
+          React.createElement(StatCard, { label: "Pwned", value: pwned, accent: "#00ff9d", T }),
+          React.createElement(StatCard, { label: "In Progress", value: inProg, accent: "#d4a017", T }),
+          React.createElement(StatCard, { label: "User Flags", value: userFlags, accent: "#00ccff", T }),
+          React.createElement(StatCard, { label: "Root Flags", value: rootFlags, accent: "#ff6b35", T }),
+          React.createElement(StatCard, { label: "Day Streak", value: `${streak}🔥`, accent: "#ff4f4f", T }),
+          React.createElement(StatCard, { label: "Total", value: machines.length, accent: T.textDim, T })
         ),
 
         // Filters
         React.createElement("div", {
           style: {
-            background: "rgba(255,255,255,0.02)", border: "1px solid #21262d",
+            background: T.surface2,
+            border: `1px solid ${T.border}`,
             borderRadius: "8px", padding: "14px 16px", marginBottom: "20px",
             display: "flex", gap: "10px", flexWrap: "wrap", alignItems: "center",
           }
@@ -213,14 +222,14 @@ export default function App() {
         ),
 
         // Machine count
-        React.createElement("div", { style: { color: "#555", fontSize: "11px", letterSpacing: "1px", marginBottom: "12px" } },
+        React.createElement("div", { style: { color: T.textFaint, fontSize: "11px", letterSpacing: "1px", marginBottom: "12px" } },
           `SHOWING ${filtered.length} OF ${machines.length} MACHINES`
         ),
 
         // Machine list
         React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: "10px" } },
           filtered.length === 0 && React.createElement("div", {
-            style: { textAlign: "center", color: "#444", padding: "60px 20px", border: "1px dashed #21262d", borderRadius: "8px" }
+            style: { textAlign: "center", color: T.textFaint, padding: "60px 20px", border: `1px dashed ${T.border}`, borderRadius: "8px" }
           },
             React.createElement("div", { style: { fontSize: "32px", marginBottom: "10px" } }, "🖥️"),
             React.createElement("div", { style: { fontSize: "13px" } }, "No machines found. Add your first target.")
@@ -231,13 +240,14 @@ export default function App() {
               machine: m,
               onEdit: () => setModal(m),
               onDelete: () => deleteMachine(m.id),
+              T,
             })
           )
         ),
 
         // Footer
         React.createElement("div", {
-          style: { textAlign: "center", color: "#333", fontSize: "10px", letterSpacing: "2px", marginTop: "40px", paddingTop: "20px", borderTop: "1px solid #21262d" }
+          style: { textAlign: "center", color: T.textFaintest, fontSize: "10px", letterSpacing: "2px", marginTop: "40px", paddingTop: "20px", borderTop: `1px solid ${T.border}` }
         }, `VIBEHACK TRACKER · OSCP PREP · ADANI · ${new Date().getFullYear()}`)
       ),
 
@@ -246,6 +256,7 @@ export default function App() {
         machine: modal === "add" ? null : modal,
         onClose: () => setModal(null),
         onSave: saveMachine,
+        T,
       })
     )
   );
